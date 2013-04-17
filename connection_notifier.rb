@@ -64,18 +64,17 @@ module Netstat
 end
 
 # When first starting the script, mark ALL devices as disconnected
-http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
-http_client.post "https://amigobooth.com/api/v1/devices/disconnect_all"
+# http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
+# http_client.post "https://amigobooth.com/api/v1/devices/disconnect_all"
 
 # Start with an empty array of connected device user ids
 @connected_device_user_ids = []
 
 # loop do
   # devices = MultiJson.load http_client.get("https://amigobooth.com/api/v1/devices")
-  entries = Netstat::Parser.new.entries
 
   # Iterate over each entry in netstat and mark it connected
-  entries.each do |e|
+  Netstat::Parser.new.entries.each do |e|
     @connected_device_user_ids << e.user_id
   end
 
