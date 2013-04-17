@@ -22,6 +22,7 @@ devices.each do |device|
   data_bag["ssh_keys"]   = [device["ssh_public_key"]]
   data_bag["ssh_keygen"] = "false"
   data_bag["shell"]      = "/usr/sbin/nologin"
+  data_bag["uid"]        = device["uid"]
 
   File.open("#{chef_root_dir}/data_bags/users/#{username}.json", "w") {|f| f.write(MultiJson.dump(data_bag, pretty: true)) }
   data_bag_users << username
