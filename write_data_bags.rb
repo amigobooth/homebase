@@ -2,14 +2,14 @@ require "fileutils"
 require "bundler"
 Bundler.require
 
-token = ARGV[0]
+api_token = ARGV[0]
 
-raise "You must provide an API token as an argument to this command" if token.empty?
+raise "You must provide an API token as an argument to this command" if api_token.empty?
 
 chef_root_dir = ARGV[1] || Dir.pwd
 FileUtils.mkdir_p "#{chef_root_dir}/data_bags/users"
 endpoint = "https://amigobooth.com/api/v1/services/devices"
-body = Http.with_headers("X-AmigoBooth-Token" => token).get endpoint
+body = Http.with_headers("X-AmigoBooth-Token" => api_token).get endpoint
 
 devices = MultiJson.load body
 
