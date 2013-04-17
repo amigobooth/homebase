@@ -20,7 +20,7 @@ devices.each do |device|
   data_bag["comment"]    = device["description"]
   data_bag["home"]       = "/home/#{username}"
   data_bag["ssh_keys"]   = [device["ssh_public_key"]]
-  data_bag["ssh_keygen"] = false
+  data_bag["ssh_keygen"] = "false"
   data_bag["shell"]      = "/usr/sbin/nologin"
 
   File.open("#{chef_root_dir}/data_bags/users/#{username}.json", "w") {|f| f.write(MultiJson.dump(data_bag, pretty: true)) }
