@@ -1,0 +1,16 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    certified (0.1.1)
+    http (0.4.0)
+      certified
+      http_parser.rb
+    http_parser.rb (0.5.3)
+    multi_json (1.7.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  http
+  multi_json
