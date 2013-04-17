@@ -3,6 +3,9 @@ require "bundler"
 Bundler.require
 
 token = ARGV[0]
+
+raise "You must provide an API token as an argument to this command" if token.empty?
+
 chef_root_dir = ARGV[1] || Dir.pwd
 FileUtils.mkdir_p "#{chef_root_dir}/data_bags/users"
 endpoint = "https://amigobooth.com/api/v1/services/devices"
@@ -19,7 +22,7 @@ devices.each do |device|
   data_bag["id"]         = username
   data_bag["comment"]    = device["description"]
   data_bag["home"]       = "/home/#{username}"
-  data_bag["ssh_keys"]   = [device["ssh_public_key"]]
+  data_bag["ssh_keys"]   = [%(no-agent-forwarding,no-X11-forwarding,no-pty,command="/bin/false" ) + device["ssh_public_key"]]
   data_bag["ssh_keygen"] = "false"
   data_bag["shell"]      = "/usr/sbin/nologin"
   data_bag["uid"]        = device["uid"]
