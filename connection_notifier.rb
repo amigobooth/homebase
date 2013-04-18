@@ -101,7 +101,7 @@ loop do
     end
   end
 
-  sleep 4
+  sleep 8
 end
 
 
