@@ -4,7 +4,7 @@ Bundler.require
 
 api_token = ARGV[0]
 
-raise "You must provide an API token as an argument to this command" if api_token.empty?
+raise "You must provide an API token as an argument to this command" if api_token.nil? or api_token.empty?
 
 chef_root_dir = ARGV[1] || Dir.pwd
 FileUtils.mkdir_p "#{chef_root_dir}/data_bags/users"
