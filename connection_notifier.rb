@@ -65,13 +65,13 @@ end
 
 # When first starting the script, mark ALL devices as disconnected
 http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
-http_client.post "https://amigobooth.com/api/v1/devices/disconnect_all"
+http_client.post "https://amigobooth.com/api/v1/services/devices/disconnect_all"
 
 # Start with an empty array of connected device user ids
 @connected_device_user_ids = []
 
 loop do
-  devices = MultiJson.load http_client.get("https://amigobooth.com/api/v1/devices")
+  devices = MultiJson.load http_client.get("https://amigobooth.com/api/v1/services/devices")
 
   entries = Netstat::Parser.new.entries
 
@@ -80,7 +80,7 @@ loop do
 
   disconnected_user_ids.each do |uid|
     device = devices.select{|d| d["uid"] == uid}.first
-    http_client.post "https://amigobooth.com/api/v1/devices/#{device["uuid"]}/disconnect"
+    http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["uuid"]}/disconnect"
   end
 
   @connected_device_user_ids -= disconnected_user_ids
@@ -93,7 +93,7 @@ loop do
       next if @connected_device_user_ids.include? e.user_id
 
       device = devices.select{|d| d["uid"] == e.user_id}.first
-      http_client.post "https://amigobooth.com/api/v1/devices/#{device["uuid"]}/connect"
+      http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["uuid"]}/connect"
       @connected_device_user_ids << e.user_id
     end
   end
