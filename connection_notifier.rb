@@ -67,6 +67,12 @@ end
 http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
 http_client.post "https://amigobooth.com/api/v1/services/devices/disconnect_all"
 
+trap("INT") do
+  puts "Marking all as disconnected and quitting"
+  http_client.post "https://amigobooth.com/api/v1/services/devices/disconnect_all"
+  exit 0
+end
+
 # Start with an empty array of connected device user ids
 @connected_device_user_ids = []
 
