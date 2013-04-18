@@ -64,22 +64,42 @@ module Netstat
 end
 
 # When first starting the script, mark ALL devices as disconnected
-# http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
-# http_client.post "https://amigobooth.com/api/v1/devices/disconnect_all"
+http_client = Http.with_headers("X-AmigoBooth-Token" => api_token)
+http_client.post "https://amigobooth.com/api/v1/devices/disconnect_all"
 
 # Start with an empty array of connected device user ids
 @connected_device_user_ids = []
 
-# loop do
-  # devices = MultiJson.load http_client.get("https://amigobooth.com/api/v1/devices")
+loop do
+  devices = MultiJson.load http_client.get("https://amigobooth.com/api/v1/devices")
 
-  # Iterate over each entry in netstat and mark it connected
-  Netstat::Parser.new.entries.each do |e|
-    @connected_device_user_ids << e.user_id
+  entries = Netstat::Parser.new.entries
+
+  # If any UIDs were connected but are no longer in the list of entries, mark it disconnected
+  disconnected_user_ids = @connected_device_user_ids - entries.select{|e| e.user_id.between? 2001..2999 }.map(&:user_id)
+
+  disconnected_user_ids.each do |uid|
+    device = devices.select{|d| d["uid"] == uid}.first
+    http_client.post "https://amigobooth.com/api/v1/devices/#{device["uuid"]}/disconnect"
   end
 
-  # entries = nil
-  # sleep 5
-# end
+  @connected_device_user_ids -= disconnected_user_ids
 
-puts @connected_device_user_ids
+  # Iterate over each entry in netstat and mark it connected
+  entries.each do |e|
+    # We only care about user IDs between 2001-2999
+    if e.user_id.between? 2001..2999
+      # Skip it if it's already marked as connected
+      next if @connected_device_user_ids.include? e.user_id
+
+      device = devices.select{|d| d["uid"] == e.user_id}.first
+      http_client.post "https://amigobooth.com/api/v1/devices/#{device["uuid"]}/connect"
+      @connected_device_user_ids << e.user_id
+    end
+  end
+
+  puts @connected_device_user_ids
+  sleep 4
+end
+
+
