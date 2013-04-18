@@ -76,7 +76,7 @@ loop do
   entries = Netstat::Parser.new.entries
 
   # If any UIDs were connected but are no longer in the list of entries, mark it disconnected
-  disconnected_user_ids = @connected_device_user_ids - entries.select{|e| e.user_id.between? 2001..2999 }.map(&:user_id)
+  disconnected_user_ids = @connected_device_user_ids - entries.select{|e| e.user_id.between?(2001, 2999) }.map(&:user_id)
 
   disconnected_user_ids.each do |uid|
     device = devices.select{|d| d["uid"] == uid}.first
@@ -88,7 +88,7 @@ loop do
   # Iterate over each entry in netstat and mark it connected
   entries.each do |e|
     # We only care about user IDs between 2001-2999
-    if e.user_id.between? 2001..2999
+    if e.user_id.between?(2001, 2999)
       # Skip it if it's already marked as connected
       next if @connected_device_user_ids.include? e.user_id
 
