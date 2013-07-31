@@ -16,19 +16,19 @@ devices = MultiJson.load body
 data_bag_users = []
 
 devices.each do |device|
-  username = device["id"].gsub("-", "")
+  hardware_address = device["hardware_address"]
 
   data_bag = Hash.new
-  data_bag["id"]         = username
+  data_bag["id"]         = hardware_address
   data_bag["comment"]    = device["description"]
-  data_bag["home"]       = "/home/#{username}"
+  data_bag["home"]       = "/home/#{hardware_address}"
   data_bag["ssh_keys"]   = [%(no-agent-forwarding,no-X11-forwarding,no-pty,command="/bin/false" ) + device["ssh_public_key"]]
   data_bag["ssh_keygen"] = "false"
   data_bag["shell"]      = "/usr/sbin/nologin"
   data_bag["uid"]        = device["uid"]
 
-  File.open("#{chef_root_dir}/data_bags/users/#{username}.json", "w") {|f| f.write(MultiJson.dump(data_bag, pretty: true)) }
-  data_bag_users << username
+  File.open("#{chef_root_dir}/data_bags/users/#{hardware_address}.json", "w") {|f| f.write(MultiJson.dump(data_bag, pretty: true)) }
+  data_bag_users << hardware_address
 end
 
 node_info = {

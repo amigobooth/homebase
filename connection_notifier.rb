@@ -86,8 +86,8 @@ loop do
 
   disconnected_user_ids.each do |uid|
     device = devices.select{|d| d["uid"] == uid}.first
-    puts "Marking device #{device["id"]} disconnected"
-    http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["id"]}/disconnect"
+    puts "Marking device #{device["hardware_address"]} disconnected"
+    http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["hardware_address"]}/disconnect"
   end
 
   @connected_device_user_ids -= disconnected_user_ids
@@ -101,8 +101,8 @@ loop do
 
       device = devices.select{|d| d["uid"] == e.user_id}.first
 
-      puts "Marking device #{device["id"]} connected"
-      http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["id"]}/connect"
+      puts "Marking device #{device["hardware_address"]} connected"
+      http_client.post "https://amigobooth.com/api/v1/services/devices/#{device["hardware_address"]}/connect"
       @connected_device_user_ids << e.user_id
     end
   end
